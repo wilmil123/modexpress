@@ -338,8 +338,10 @@ gauge_residuals <- function(resid_col,
   if (!is.null(by_factor)) {
     if (!is.null(component)) {
       ptitle <- paste("Partial residuals of", component, "on", outcome_term, "by", by_factor)
+      ytitle <- paste(lookup_residual_type(res_type), "residuals of", component)
     } else {
       ptitle <- paste("Residuals for", outcome_term, "by", by_factor)
+      ytitle <- paste(lookup_residual_type(res_type), "residuals")
     }
     fac_plot <- ggplot2::ggplot(orig_data) +
       ggplot2::geom_boxplot(ggplot2::aes(
@@ -351,7 +353,7 @@ gauge_residuals <- function(resid_col,
       cowplot::theme_minimal_grid() +
       ggplot2::labs(
         x = by_factor,
-        y = paste(lookup_residual_type(res_type), "residuals"),
+        y = ytitle,
         fill = by_factor,
         title = ptitle
       )
@@ -362,8 +364,10 @@ gauge_residuals <- function(resid_col,
   if (!is.null(by_covar)) {
     if (!is.null(component)) {
       ptitle <- paste("Partial residuals of", component, "on", outcome_term, "by", by_covar)
+      ytitle <- paste(lookup_residual_type(res_type), "residuals of", component)
     } else {
       ptitle <- paste("Residuals for", outcome_term, "by", by_covar)
+      ytitle <- paste(lookup_residual_type(res_type), "residuals")
     }
     switch(covar_fit,
            linear = {
@@ -405,7 +409,7 @@ gauge_residuals <- function(resid_col,
       cowplot::theme_minimal_grid() +
       ggplot2::labs(
         x = by_covar,
-        y = paste(lookup_residual_type(res_type), "residuals"),
+        y = ytitle,
         title = ptitle
       )
 

@@ -787,6 +787,8 @@ express_hist.glm <- function(model,
 #' to a multivariate regression incorporating both the factor and covariate.
 #'
 #' @param model A supplied model of type `glm`.
+#' @param orig_data Original data on which the model was built. If left NULL,
+#' it will take from the model object.
 #' @param by_factor A factor to map aesthetics to. Must be present in the
 #' original data. If left NULL, no aesthetic mapping is performed. by_factor
 #' will map by colour. Residuals will be tested for systematic variation
@@ -830,6 +832,7 @@ express_hist.glm <- function(model,
 #' @method express_gauge glm
 #' @export
 express_gauge.glm <- function(model,
+                              orig_data = NULL,
                               by_factor = NULL,
                               by_covar = NULL,
                               covar_fit = "linear",

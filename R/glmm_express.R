@@ -82,6 +82,8 @@ express_one.glmerMod <- function(model,
                                   cov_pal = cov_pal,
                                   cov_pal_rev = cov_pal_rev,
                                   show_rug = show_rug)
+  outcome_term <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]][1]
+  out_plot <- out_plot + ggplot2::labs(title = paste("Fit to", outcome_term, "by", comp_match))
   return(out_plot)
 }
 
@@ -150,21 +152,47 @@ express_many.glmerMod <- function(model,
                                  cov_pal_rev = FALSE,
                                  show_rug = FALSE,
                                  ...) {
-  # pass to lmerMod method
-  out_plot_grid <- express_many.lmerMod(model = model,
-                                        orig_data = orig_data,
-                                        comp_match = comp_match,
-                                        by_factor = by_factor,
-                                        by_covar = by_covar,
-                                        grid = grid,
-                                        b_col = b_col,
-                                        s_col = s_col,
-                                        r_col = r_col,
-                                        r_opac = r_opac,
-                                        f_pal = f_pal,
-                                        cov_pal = cov_pal,
-                                        cov_pal_rev = cov_pal_rev,
-                                        show_rug = show_rug)
+  if (is.null(comp_match)) {
+    comp_names <- attr(attr(model@frame, "terms"), "term.labels")
+  } else {
+    comp_names <- comp_match
+
+    if (length(comp_names) == 1) {
+      message(
+        paste(
+          "Only one component supplied:",
+          comp_names,
+          "\nIt may be preferable to use `express_one` with a single component because it returns a `ggplot2` object rather than a `cowplot::plot_grid` object, which is less customizable."
+        )
+      )
+    }
+  }
+
+  out_plot_list <- lapply(comp_names, function(comp_name) {
+    out_plot <- express_one.glmerMod(
+      model = model,
+      comp_match = comp_name,
+      orig_data = orig_data,
+      by_factor = by_factor,
+      by_covar = by_covar,
+      b_col = b_col,
+      s_col = s_col,
+      r_col = r_col,
+      r_opac = r_opac,
+      f_pal = f_pal,
+      cov_pal = cov_pal,
+      cov_pal_rev = cov_pal_rev,
+      show_rug = show_rug
+    )
+    return(out_plot)
+  })
+
+  if (grid) {
+    out_plot_grid <- cowplot::plot_grid(plotlist = out_plot_list)
+  } else {
+    out_plot_grid <- out_plot_list
+    names(out_plot_grid) <- comp_names
+  }
 
   return(out_plot_grid)
 }

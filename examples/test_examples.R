@@ -201,3 +201,16 @@ express_gaugepart(lmm_2, iris, "Species", by_covar = "Petal.Length")
 glmm_1 <- lme4::glmer(Sepal.Length ~ Sepal.Width + (1|Species),
                       data = iris,
                       family = inverse.gaussian(link = "log"))
+
+# one GLMM component
+express_one(glmm_1, iris, "Sepal.Width", by_covar = "Petal.Length")
+# many GLMM components
+express_many(glmm_1, iris, by_covar = "Petal.Length")
+
+# evaluate a GLMM object
+express_eval(glmm_1, iris, by_factor = "Species")
+
+# gauge a full model
+express_gauge(glmm_1, iris, by_factor = "Species")
+# gauge a single model component
+express_gaugepart(glmm_1, iris, "Sepal.Width", by_covar = "Petal.Width")

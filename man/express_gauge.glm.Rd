@@ -6,6 +6,7 @@
 \usage{
 \method{express_gauge}{glm}(
   model,
+  orig_data = NULL,
   by_factor = NULL,
   by_covar = NULL,
   covar_fit = "linear",
@@ -19,6 +20,9 @@
 }
 \arguments{
 \item{model}{A supplied model of type \code{glm}.}
+
+\item{orig_data}{Original data on which the model was built. If left NULL,
+it will take from the model object.}
 
 \item{by_factor}{A factor to map aesthetics to. Must be present in the
 original data. If left NULL, no aesthetic mapping is performed. by_factor

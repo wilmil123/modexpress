@@ -1,0 +1,26 @@
+{
+    "id": "A52E888B",
+    "path": "~/Documents/modexpress/R/express_helpers.R",
+    "project_path": "R/express_helpers.R",
+    "type": "r_source",
+    "hash": "3986028183",
+    "contents": "",
+    "dirty": false,
+    "created": 1774012555157.0,
+    "source_on_save": false,
+    "relative_order": 8,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "415,63",
+        "scrollLine": "398"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1774278858,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1774278858323,
+    "read_only": false,
+    "read_only_alternatives": []
+}

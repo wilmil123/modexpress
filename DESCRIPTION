@@ -1,0 +1,33 @@
+Package: modexpress
+Type: Package
+Title: Express Model Coefficients and Diagnostics Along Variables Outside of the Model
+Version: 0.1.0
+Authors@R: c(
+    person(
+      "William", "Chapman",
+      email = "william.m.chapman@mail.mcgill.ca",
+      role = c("aut", "cre")
+    )
+  )
+Description: Methods for plotting and testing model coefficients and diagnostics
+  to assess whether or not there is systematic variation within the model
+  according to categorical or factor variables, whether or not they are
+  used in the model itself.
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports:
+  dplyr,
+  tidyr,
+  purrr,
+  tidyselect,
+  ggplot2,
+  colorspace,
+  cowplot,
+  gratia,
+  lme4,
+  effects
+Suggests:
+  mgcv
+License: MIT + file LICENSE

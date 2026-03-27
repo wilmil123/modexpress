@@ -532,9 +532,9 @@ express_linpred.glm <- function(model,
   }
   if (is.null(orig_data))
     stop("Could not access model data. Please make sure to define `data` in the `glm` object.")
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term))
+  orig_data <- remove_orig_data_na(orig_data, model_terms)
   if (res_type == "standard") {
     orig_data$`.residual` <- stats::rstandard(model)
   } else {

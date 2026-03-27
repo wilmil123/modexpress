@@ -1,6 +1,6 @@
 ---
 title: "Examples for 'modexpress'"
-date: March 23, 2026
+date: March 27, 2026
 output:
   github_document:
     fig_width: 10

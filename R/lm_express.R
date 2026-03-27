@@ -80,10 +80,10 @@ express_one.lm <- function(model,
       "The supplied model appears to only have one component. Consider `express_fit` for single-term models."
     )
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
+  orig_data <- remove_orig_data_na(orig_data, model_terms)
 
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term))
   orig_data$partial_resids <- stats::residuals(model, type = "partial")[, comp_match]
 
   coef_val <- summary(model)$coef[comp_match, 1]
@@ -458,9 +458,10 @@ express_fit.lm <- function(model,
                            ...) {
   # whether the covariate palette should be reversed
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term))
+  orig_data <- remove_orig_data_na(orig_data, model_terms)
+
   orig_data$`.fitted` <- model$fitted.values
 
   out_plot <- ggplot2::ggplot(orig_data)
@@ -551,9 +552,10 @@ express_qqresid.lm <- function(model,
   # local variable definitions
   `.residual` <- qq <- NULL
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term))
+  orig_data <- remove_orig_data_na(orig_data, model_terms)
+
   if (res_type == "standard") {
     orig_data$`.residual` <- stats::rstandard(model)
   } else {
@@ -649,9 +651,10 @@ express_linpred.lm <- function(model,
                                ...) {
   # whether the covariate palette should be reversed
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term))
+  orig_data <- remove_orig_data_na(orig_data, model_terms)
+
   if (res_type == "standard") {
     orig_data$`.residual` <- stats::rstandard(model)
   } else {
@@ -745,9 +748,10 @@ express_scloc.lm <- function(model,
   # local variable definitions
   `.fitted` <- `.scloc` <- NULL
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term))
+  orig_data <- remove_orig_data_na(orig_data, model_terms)
+
   if (res_type == "standard") {
     orig_data$`.residual` <- stats::rstandard(model)
   } else {
@@ -849,9 +853,10 @@ express_lev.lm <- function(model,
   # local variable definitions
   `.residual` <- `.lev` <- NULL
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term))
+  orig_data <- remove_orig_data_na(orig_data, model_terms)
+
   if (res_type == "standard") {
     orig_data$`.residual` <- stats::rstandard(model)
   } else {
@@ -937,9 +942,10 @@ express_hist.lm <- function(model,
   # local variable definitions
   `.residual` <- NULL
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term))
+  orig_data <- remove_orig_data_na(orig_data, model_terms)
+
   if (res_type == "standard") {
     orig_data$`.residual` <- stats::rstandard(model)
   } else {
@@ -1046,9 +1052,10 @@ express_gauge.lm <- function(model,
       is.null(by_covar))
     stop("Both `by_factor` and `by_covar` are NULL. Please supply one or both.")
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term))
+  orig_data <- remove_orig_data_na(orig_data, model_terms)
+
   if (res_type == "standard") {
     orig_data$`.residual` <- stats::rstandard(model)
   } else {
@@ -1171,13 +1178,14 @@ express_gaugepart.lm <- function(model,
       is.null(by_covar))
     stop("Both `by_factor` and `by_covar` are NULL. Please supply one or both.")
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
+
   out_objs <- lapply(comp_names, function(component) {
     if (!(component %in% attr(model$terms, "term.labels")))
       stop (paste("Could not find model component matching", component))
 
-    orig_data <- orig_data |>
-      tidyr::drop_na(tidyselect::any_of(outcome_term))
+    orig_data <- remove_orig_data_na(orig_data, model_terms)
     orig_data$partial_resids <- stats::residuals(model, type = "partial")[, component]
     out_obj <- gauge_residuals(
       resid_col = "partial_resids",

@@ -411,9 +411,10 @@ express_fit.lmerMod <- function(model,
                                 cov_pal = "Sunset Dark",
                                 cov_pal_rev = FALSE,
                                 ...) {
+  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[2]]
   outcome_term <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]][1]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term))
+  orig_data <- remove_orig_data_na(orig_data, model_terms)
+
   orig_data$`.fitted` <- stats::fitted(model)
 
   out_plot <- ggplot2::ggplot(orig_data)
@@ -499,9 +500,10 @@ express_qqresid.lmerMod <- function(model,
   # local variable definitions
   `.residual` <- qq <- NULL
 
+  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[2]]
   outcome_term <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]][1]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term))
+  orig_data <- remove_orig_data_na(orig_data, model_terms)
+
   orig_data$`.residual` <- stats::residuals(model, type = res_type)
   orig_data <- make_qq(orig_data, ".residual")
 
@@ -586,9 +588,10 @@ express_linpred.lmerMod <- function(model,
                                     cov_pal = "Sunset Dark",
                                     cov_pal_rev = FALSE,
                                     ...) {
+  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[2]]
   outcome_term <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]][1]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term))
+  orig_data <- remove_orig_data_na(orig_data, model_terms)
+
   orig_data$`.residual` <- stats::residuals(model, type = res_type)
   orig_data$`.fitted` <- stats::fitted(model)
 
@@ -662,9 +665,10 @@ express_hist.lmerMod <- function(model,
   # local variable definitions
   `.residual` <- NULL
 
+  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[2]]
   outcome_term <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]][1]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term))
+  orig_data <- remove_orig_data_na(orig_data, model_terms)
+
   orig_data$`.residual` <- stats::residuals(model, type = res_type)
 
   out_plot <- ggplot2::ggplot(orig_data)
@@ -761,9 +765,10 @@ express_gauge.lmerMod <- function(model,
       is.null(by_covar))
     stop("Both `by_factor` and `by_covar` are NULL. Please supply one or both.")
 
+  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[2]]
   outcome_term <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]][1]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term))
+  orig_data <- remove_orig_data_na(orig_data, model_terms)
+
   orig_data$`.residual` <- stats::residuals(model, type = res_type)
 
   out_obj <- gauge_residuals(
@@ -882,13 +887,14 @@ express_gaugepart.lmerMod <- function(model,
       is.null(by_covar))
     stop("Both `by_factor` and `by_covar` are NULL. Please supply one or both.")
 
+  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[2]]
   outcome_term <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]][1]
+
   out_objs <- lapply(comp_names, function(component) {
     if (!(component %in% attr(attr(model@frame, "terms"), "term.labels")))
       stop (paste("Could not find model component matching", component))
 
-    orig_data <- orig_data |>
-      tidyr::drop_na(tidyselect::any_of(outcome_term))
+    orig_data <- remove_orig_data_na(orig_data, model_terms)
 
     # check if we are wanting a random effect or a linear term
     # the random effects in LMMs work slightly different than in GAMs,
@@ -995,8 +1001,9 @@ plot_lmm_partial_resids <- function(model,
   # local variable initialization
   upper_ci <- lower_ci <- est_line <- NULL
 
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term))
+  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[2]]
+  outcome_term <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]][1]
+  orig_data <- remove_orig_data_na(orig_data, model_terms)
   orig_data$partial_resids <- stats::residuals(effects::effect(comp_match, partial.residuals = TRUE, model))
 
   coef_val <- summary(model)$coef[comp_match, 1]

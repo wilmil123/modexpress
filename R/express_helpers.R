@@ -78,6 +78,15 @@ unpack_model_data <- function(orig_data, gam_model) {
   return(orig_data)
 }
 
+remove_orig_data_na <- function(orig_data, model_terms) {
+  if (any(is.na(dplyr::select(orig_data,
+                              tidyselect::any_of(model_terms))))) message("Found NAs in original data for terms used in model. These will be dropped.")
+
+  orig_data <- orig_data |>
+    tidyr::drop_na(tidyselect::any_of(model_terms))
+  return(orig_data)
+}
+
 build_smooth_regex <- function(comp_match) {
   # regex partial matching stuff
   component_split <- strsplit(comp_match, ",")[[1]]
@@ -90,6 +99,7 @@ grab_smooth_from_regex <- function(model, comp_match, do_regex, ...) {
   UseMethod("grab_smooth_from_regex")
 }
 
+#' @export
 grab_smooth_from_regex.gam <- function(model, comp_match, do_regex, ...) {
   if (do_regex) {
     component_regex <- build_smooth_regex(comp_match)
@@ -103,6 +113,7 @@ grab_smooth_from_regex.gam <- function(model, comp_match, do_regex, ...) {
   return(smooth_name)
 }
 
+#' @export
 grab_smooth_from_regex.lm <- function(model, comp_match, do_regex, ...) {
   if (do_regex) {
     component_regex <- build_smooth_regex(comp_match)
@@ -116,8 +127,10 @@ grab_smooth_from_regex.lm <- function(model, comp_match, do_regex, ...) {
   return(comp_name)
 }
 
+#' @export
 grab_smooth_from_regex.glm <- grab_smooth_from_regex.lm
 
+#' @export
 grab_smooth_from_regex.lmerMod <- function(model, comp_match, do_regex, ...) {
   if (do_regex) {
     component_regex <- build_smooth_regex(comp_match)
@@ -131,6 +144,7 @@ grab_smooth_from_regex.lmerMod <- function(model, comp_match, do_regex, ...) {
   return(comp_name)
 }
 
+#' @export
 grab_smooth_from_regex.glmerMod <- grab_smooth_from_regex.lmerMod
 
 make_qq <- function(data, fact_to_order) {

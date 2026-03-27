@@ -1,6 +1,6 @@
 Examples for ‘modexpress’
 ================
-March 23, 2026
+March 27, 2026
 
 ## Examples of functions using test data (mostly iris or mtcars)\*\*
 
@@ -1056,7 +1056,7 @@ express_many(lmm_2, iris)
 
 <img src="test-examples_files/figure-gfm/lmm_2_all-1.png" alt="Expression of lmm_2 components"  />
 
-For LMMs, `express_eval()` is similar to the GAM method note that
+For LMMs, `express_eval()` is similar to the GAM method. Note that
 `plot.lmerMod` returns a single plot of fitted values vs. residuals,
 that is equivalent to `express_linpred()` and is included in the
 evaluation.

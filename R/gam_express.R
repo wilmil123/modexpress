@@ -456,9 +456,9 @@ express_fit.gam <- function(model,
 
   orig_data <- unpack_model_data(orig_data, model)
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term)) |>
+  orig_data <- remove_orig_data_na(orig_data, model_terms) |>
     gratia::add_fitted(model)
 
   out_plot <- ggplot2::ggplot(orig_data)
@@ -556,9 +556,9 @@ express_qqresid.gam <- function(model,
 
   orig_data <- unpack_model_data(orig_data, model)
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term)) |>
+  orig_data <- remove_orig_data_na(orig_data, model_terms) |>
     gratia::add_residuals(model, type = res_type)
   orig_data <- make_qq(orig_data, ".residual")
 
@@ -656,9 +656,9 @@ express_linpred.gam <- function(model,
   # whether the covariate palette should be reversed
   orig_data <- unpack_model_data(orig_data, model)
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term)) |>
+  orig_data <- remove_orig_data_na(orig_data, model_terms) |>
     gratia::add_residuals(model, type = res_type)
   orig_data$`.linpred` <- model$linear.predictors
 
@@ -743,9 +743,9 @@ express_hist.gam <- function(model,
 
   orig_data <- unpack_model_data(orig_data, model)
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term)) |>
+  orig_data <- remove_orig_data_na(orig_data, model_terms) |>
     gratia::add_residuals(model, type = res_type)
 
   out_plot <- ggplot2::ggplot(orig_data)
@@ -855,9 +855,9 @@ express_gauge.gam <- function(model,
 
   orig_data <- unpack_model_data(orig_data, model)
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term)) |>
+  orig_data <- remove_orig_data_na(orig_data, model_terms) |>
     gratia::add_residuals(model, type = res_type)
 
   out_obj <- gauge_residuals(
@@ -984,10 +984,11 @@ express_gaugepart.gam <- function(model,
       is.null(by_covar))
     stop("Both `by_factor` and `by_covar` are NULL. Please supply one or both.")
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
+
   out_objs <- lapply(smooth_names, function(smooth_name) {
-    orig_data <- orig_data |>
-      tidyr::drop_na(tidyselect::any_of(outcome_term)) |>
+    orig_data <- remove_orig_data_na(orig_data, model_terms) |>
       gratia::add_partial_residuals(model)
 
     out_obj <- gauge_residuals(
@@ -1173,9 +1174,9 @@ plot_univar_smooth <- function(orig_data,
   # local variable definitions
   `.lower_ci` <- `.upper_ci` <- `.estimate` <- NULL
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term)) |>
+  orig_data <- remove_orig_data_na(orig_data, model_terms) |>
     gratia::add_partial_residuals(model)
 
   if (!all(is.na(smooth_funcs$`.by`))) {
@@ -1246,9 +1247,9 @@ plot_bivar_smooth <- function(orig_data,
   # local variable definitions
   `.estimate` <- NULL
 
+  model_terms <- attr(model$terms, "term.labels")
   outcome_term <- model$terms[[2]]
-  orig_data <- orig_data |>
-    tidyr::drop_na(tidyselect::any_of(outcome_term)) |>
+  orig_data <- remove_orig_data_na(orig_data, model_terms) |>
     gratia::add_partial_residuals(model)
 
   if (!all(is.na(smooth_funcs$`.by`))) {

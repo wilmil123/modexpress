@@ -72,9 +72,6 @@ express_one.lm <- function(model,
 
   comp_match <- grab_smooth_from_regex(model, comp_match, do_regex)
 
-  if (length(comp_match) == 0) {
-    stop("No matches to supplied component!")
-  }
   if (length(attr(model$terms, "term.labels")) == 1)
     message (
       "The supplied model appears to only have one component. Consider `express_fit` for single-term models."
@@ -229,9 +226,7 @@ express_many.lm <- function(model,
   } else {
     comp_names <- grab_smooth_from_regex(model, comp_match, do_regex)
 
-    if (length(comp_names) == 0) {
-      stop("No matches to supplied component!")
-    } else if (length(comp_names) == 1) {
+    if (length(comp_names) == 1) {
       message(
         paste(
           "Only one component supplied:",
@@ -1168,10 +1163,6 @@ express_gaugepart.lm <- function(model,
     comp_names <- attr(model$terms, "term.labels")
   } else {
     comp_names <- grab_smooth_from_regex(model, comp_match, do_regex)
-  }
-
-  if (length(comp_names) == 0) {
-    stop("No matches to supplied component!")
   }
 
   if (is.null(by_factor) &

@@ -88,8 +88,6 @@ express_one.gam <- function(model,
         "\nEither refine the search parameter, or, if you want to plot multiple smooths, try `express_many`."
       )
     )
-  } else if (length(smooth_name) == 0) {
-    stop("No matches to supplied component!")
   }
 
   out_plot <- plot_gam_component(
@@ -215,8 +213,6 @@ express_many.gam <- function(model,
           "\nIt may be preferable to use `express_one` with a single smooth because it returns a `ggplot2` object rather than a `cowplot::plot_grid` object, which is less customizable."
         )
       )
-    } else if (length(smooth_names) == 0) {
-      stop("No matches to supplied component!")
     }
   }
 
@@ -975,9 +971,6 @@ express_gaugepart.gam <- function(model,
     smooth_names <- unique(gratia::smooth_estimates(model)$`.smooth`)
   } else {
     smooth_names <- grab_smooth_from_regex(model, comp_match, do_regex)
-    if (length(smooth_names) == 0) {
-      stop("No matches to supplied component!")
-    }
   }
 
   if (is.null(by_factor) &

@@ -164,9 +164,7 @@ express_many.glmerMod <- function(model,
   } else {
     comp_names <- grab_smooth_from_regex(model, comp_match, do_regex)
 
-    if (length(comp_names) == 0) {
-      stop("No matches to supplied component!")
-    } else if (length(comp_names) == 1) {
+    if (length(comp_names) == 1) {
       message(
         paste(
           "Only one component supplied:",

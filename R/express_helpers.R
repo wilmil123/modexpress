@@ -106,8 +106,13 @@ grab_smooth_from_regex.gam <- function(model, comp_match, do_regex, ...) {
     smooth_name <- grepv(component_regex,
                          unique(gratia::smooth_estimates(model)$`.smooth`),
                          perl = TRUE)
+
+    if (length(smooth_name) == 0) {
+      stop("No matches to supplied component!")
+    }
   } else {
     smooth_name <- comp_match
+    if (!(smooth_name %in% unique(gratia::smooth_estimates(model)$`.smooth`))) stop("No matches to supplied component!")
   }
 
   return(smooth_name)
@@ -120,8 +125,12 @@ grab_smooth_from_regex.lm <- function(model, comp_match, do_regex, ...) {
     comp_name <- grepv(component_regex,
                          attr(model$terms, "term.labels"),
                          perl = TRUE)
+    if (length(comp_name) == 0) {
+      stop("No matches to supplied component!")
+    }
   } else {
     comp_name <- comp_match
+    if (!(comp_name %in% attr(model$terms, "term.labels"))) stop("No matches to supplied component!")
   }
 
   return(comp_name)
@@ -139,6 +148,7 @@ grab_smooth_from_regex.lmerMod <- function(model, comp_match, do_regex, ...) {
                        perl = TRUE)
   } else {
     comp_name <- comp_match
+    if (!(comp_name %in% attr(attr(model@frame, "terms"), "term.labels"))) stop("No matches to supplied component!")
   }
 
   return(comp_name)

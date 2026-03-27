@@ -78,18 +78,60 @@ unpack_model_data <- function(orig_data, gam_model) {
   return(orig_data)
 }
 
-pluck_smooth_from_regex <- function(comp_match, gam_model) {
+build_smooth_regex <- function(comp_match) {
   # regex partial matching stuff
   component_split <- strsplit(comp_match, ",")[[1]]
   component_regex <- purrr::map_chr(component_split, ~ sprintf("(?=.*%s)", .x))
   component_paste <- paste0("^", paste0(component_regex, collapse = ""))
+  return(component_paste)
+}
 
-  smooth_name <- grepv(component_paste,
-                       unique(gratia::smooth_estimates(gam_model)$`.smooth`),
-                       perl = TRUE)
+grab_smooth_from_regex <- function(model, comp_match, do_regex, ...) {
+  UseMethod("grab_smooth_from_regex")
+}
+
+grab_smooth_from_regex.gam <- function(model, comp_match, do_regex, ...) {
+  if (do_regex) {
+    component_regex <- build_smooth_regex(comp_match)
+    smooth_name <- grepv(component_regex,
+                         unique(gratia::smooth_estimates(model)$`.smooth`),
+                         perl = TRUE)
+  } else {
+    smooth_name <- comp_match
+  }
 
   return(smooth_name)
 }
+
+grab_smooth_from_regex.lm <- function(model, comp_match, do_regex, ...) {
+  if (do_regex) {
+    component_regex <- build_smooth_regex(comp_match)
+    comp_name <- grepv(component_regex,
+                         attr(model$terms, "term.labels"),
+                         perl = TRUE)
+  } else {
+    comp_name <- comp_match
+  }
+
+  return(comp_name)
+}
+
+grab_smooth_from_regex.glm <- grab_smooth_from_regex.lm
+
+grab_smooth_from_regex.lmerMod <- function(model, comp_match, do_regex, ...) {
+  if (do_regex) {
+    component_regex <- build_smooth_regex(comp_match)
+    comp_name <- grepv(component_regex,
+                       attr(attr(model@frame, "terms"), "term.labels"),
+                       perl = TRUE)
+  } else {
+    comp_name <- comp_match
+  }
+
+  return(comp_name)
+}
+
+grab_smooth_from_regex.glmerMod <- grab_smooth_from_regex.lmerMod
 
 make_qq <- function(data, fact_to_order) {
   data <- data[order(data[[fact_to_order]]), ]

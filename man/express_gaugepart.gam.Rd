@@ -7,6 +7,7 @@
 \method{express_gaugepart}{gam}(
   model,
   comp_match = NULL,
+  do_regex = TRUE,
   orig_data = NULL,
   by_factor = NULL,
   by_covar = NULL,
@@ -28,6 +29,9 @@ will match any component with "chla" in the name. Supplying
 \code{comp_match = "s,toc"} will match a component that contains "s" followed by
 "toc" anywhere afterwards in the component name, e.g., "s(toc)".
 Supplying \code{comp_match = "ti,chla,toc"} will then match "ti(chla, toc)".}
+
+\item{do_regex}{Should \code{comp_match} work by selective forward partial matching?
+Default TRUE.}
 
 \item{orig_data}{Original data on which the model was built. This can either
 be supplied with the original data frame directly, or, with \code{mgcv::gam}

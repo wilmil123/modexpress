@@ -9,6 +9,8 @@
 #' @param comp_match Which component to match? Works by partial match. For
 #' instance, supplying `comp_match = "chla"` will the component with "chla"
 #' in the name. For `express_one`, only a single match is allowed.
+#' @param do_regex Should `comp_match` work by selective forward partial matching?
+#' Default TRUE.
 #' @param orig_data Original data on which the model was built. This can either
 #' be supplied with the original data frame directly, or, with `mgcv::gam`
 #' objects, the original data can be contained within the model itself by
@@ -50,6 +52,7 @@
 #' @export
 express_one.gam <- function(model,
                             comp_match,
+                            do_regex = TRUE,
                             orig_data = NULL,
                             by_factor = NULL,
                             by_covar = NULL,
@@ -75,7 +78,7 @@ express_one.gam <- function(model,
                             ...) {
   orig_data <- unpack_model_data(orig_data, model)
 
-  smooth_name <- pluck_smooth_from_regex(comp_match, model)
+  smooth_name <- grab_smooth_from_regex(model, comp_match, do_regex)
 
   if (length(smooth_name) > 1) {
     stop(
@@ -125,6 +128,8 @@ express_one.gam <- function(model,
 #' `comp_match = "s,toc"` will match a component that contains "s" followed by
 #' "toc" anywhere afterwards in the component name, e.g., "s(toc)".
 #' Supplying `comp_match = "ti,chla,toc"` will then match "ti(chla, toc)".
+#' @param do_regex Should `comp_match` work by selective forward partial matching?
+#' Default TRUE.
 #' @param orig_data Original data on which the model was built. This can either
 #' be supplied with the original data frame directly, or, with `mgcv::gam`
 #' objects, the original data can be contained within the model itself by
@@ -170,6 +175,7 @@ express_one.gam <- function(model,
 express_many.gam <- function(model,
                              comp_match = NULL,
                              # if left null, will plot all smooths
+                             do_regex = TRUE,
                              orig_data = NULL,
                              by_factor = NULL,
                              by_covar = NULL,
@@ -199,7 +205,7 @@ express_many.gam <- function(model,
   if (is.null(comp_match)) {
     smooth_names <- unique(gratia::smooth_estimates(model)$`.smooth`)
   } else {
-    smooth_names <- pluck_smooth_from_regex(comp_match, model)
+    smooth_names <- grab_smooth_from_regex(model, comp_match, do_regex)
 
     if (length(smooth_names) == 1) {
       message(
@@ -893,6 +899,8 @@ express_gauge.gam <- function(model,
 #' `comp_match = "s,toc"` will match a component that contains "s" followed by
 #' "toc" anywhere afterwards in the component name, e.g., "s(toc)".
 #' Supplying `comp_match = "ti,chla,toc"` will then match "ti(chla, toc)".
+#' @param do_regex Should `comp_match` work by selective forward partial matching?
+#' Default TRUE.
 #' @param orig_data Original data on which the model was built. This can either
 #' be supplied with the original data frame directly, or, with `mgcv::gam`
 #' objects, the original data can be contained within the model itself by
@@ -942,6 +950,7 @@ express_gauge.gam <- function(model,
 #' @export
 express_gaugepart.gam <- function(model,
                                   comp_match = NULL,
+                                  do_regex = TRUE,
                                   orig_data = NULL,
                                   by_factor = NULL,
                                   by_covar = NULL,
@@ -965,7 +974,7 @@ express_gaugepart.gam <- function(model,
   if (is.null(comp_match)) {
     smooth_names <- unique(gratia::smooth_estimates(model)$`.smooth`)
   } else {
-    smooth_names <- pluck_smooth_from_regex(comp_match, model)
+    smooth_names <- grab_smooth_from_regex(model, comp_match, do_regex)
     if (length(smooth_names) == 0) {
       stop("No matches to supplied component!")
     }

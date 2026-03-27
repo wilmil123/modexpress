@@ -315,7 +315,7 @@ Expressing all components:
 express_many(lmm_2, iris)
 ```
 
-For LMMs, `express_eval()` is similar to the GAM method note that `plot.lmerMod` returns a single plot of fitted values vs. residuals, that is equivalent to `express_linpred()` and is included in the evaluation.
+For LMMs, `express_eval()` is similar to the GAM method. Note that `plot.lmerMod` returns a single plot of fitted values vs. residuals, that is equivalent to `express_linpred()` and is included in the evaluation.
 ```{r lmm_2_eval_by_pl, fig.alt="Expression of lmm_2 evaluation by PW"}
 express_eval(lmm_2, iris, by_covar = "Petal.Length")
 ```

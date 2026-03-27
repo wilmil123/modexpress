@@ -12,6 +12,8 @@
 #' @param comp_match Which component to match? Must fully match only one
 #' component present in the model. Component names can be found in, e.g.,
 #' `summary.glm`.
+#' @param do_regex Should `comp_match` work by selective forward partial matching?
+#' Default FALSE.
 #' @param orig_data Original data on which the model was built. If left NULL,
 #' it will take from the model object.
 #' @param by_factor A factor to map aesthetics to. Must be present in the
@@ -46,6 +48,7 @@
 #' @export
 express_one.glm <- function(model,
                             comp_match,
+                            do_regex = FALSE,
                             orig_data = NULL,
                             by_factor = NULL,
                             by_covar = NULL,
@@ -70,11 +73,13 @@ express_one.glm <- function(model,
   }
   if (is.null(orig_data))
     stop("Could not access model data. Please make sure to define `data` in the `glm` object.")
+
   # pass to lm method
   out_plot <- express_one.lm(
     model = model,
     orig_data = orig_data,
     comp_match = comp_match,
+    do_regex = do_regex,
     by_factor = by_factor,
     b_col = b_col,
     s_col = s_col,
@@ -99,6 +104,8 @@ express_one.glm <- function(model,
 #' @param model A supplied model of type `glm`.
 #' @param comp_match Which components to match? If left NULL, all components
 #' will be plotted.
+#' @param do_regex Should `comp_match` work by selective forward partial matching?
+#' Default FALSE.
 #' @param orig_data Original data on which the model was built. If left NULL,
 #' it will take from the model object.
 #' @param by_factor A factor to map aesthetics to. Must be present in the
@@ -136,6 +143,7 @@ express_one.glm <- function(model,
 #' @export
 express_many.glm <- function(model,
                              comp_match = NULL,
+                             do_regex = FALSE,
                              orig_data = NULL,
                              by_factor = NULL,
                              by_covar = NULL,
@@ -159,9 +167,11 @@ express_many.glm <- function(model,
   if (is.null(comp_match)) {
     comp_names <- attr(model$terms, "term.labels")
   } else {
-    comp_names <- comp_match
+    comp_names <- grab_smooth_from_regex(model, comp_match, do_regex)
 
-    if (length(comp_names) == 1) {
+    if (length(comp_names) == 0) {
+      stop("No matches to supplied component!")
+    } else if (length(comp_names) == 1) {
       message(
         paste(
           "Only one component supplied:",
@@ -176,6 +186,7 @@ express_many.glm <- function(model,
     out_plot <- express_one.glm(
       model = model,
       comp_match = comp_name,
+      do_regex = FALSE,
       by_factor = by_factor,
       by_covar = by_covar,
       b_col = b_col,
@@ -880,6 +891,8 @@ express_gauge.glm <- function(model,
 #' @param model A supplied model of type `glm`.
 #' @param comp_match Which components to match? If left NULL, all components
 #' will be plotted.
+#' @param do_regex Should `comp_match` work by selective forward partial matching?
+#' Default FALSE.
 #' @param orig_data Original data on which the model was built. If left NULL,
 #' it will take from the model object.
 #' @param by_factor A factor to map aesthetics to. Must be present in the
@@ -926,6 +939,7 @@ express_gauge.glm <- function(model,
 #' @export
 express_gaugepart.glm <- function(model,
                                   comp_match = NULL,
+                                  do_regex = FALSE,
                                   orig_data = NULL,
                                   by_factor = NULL,
                                   by_covar = NULL,
@@ -944,6 +958,8 @@ express_gaugepart.glm <- function(model,
   out_objs <- express_gaugepart.lm(
     model = model,
     orig_data = orig_data,
+    comp_match = comp_match,
+    do_regex = do_regex,
     by_factor = by_factor,
     by_covar = by_covar,
     covar_fit = covar_fit,

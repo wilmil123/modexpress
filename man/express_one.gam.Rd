@@ -7,6 +7,7 @@
 \method{express_one}{gam}(
   model,
   comp_match,
+  do_regex = TRUE,
   orig_data = NULL,
   by_factor = NULL,
   by_covar = NULL,
@@ -29,6 +30,9 @@
 \item{comp_match}{Which component to match? Works by partial match. For
 instance, supplying \code{comp_match = "chla"} will the component with "chla"
 in the name. For \code{express_one}, only a single match is allowed.}
+
+\item{do_regex}{Should \code{comp_match} work by selective forward partial matching?
+Default TRUE.}
 
 \item{orig_data}{Original data on which the model was built. This can either
 be supplied with the original data frame directly, or, with \code{mgcv::gam}

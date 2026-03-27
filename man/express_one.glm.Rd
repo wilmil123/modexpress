@@ -7,6 +7,7 @@
 \method{express_one}{glm}(
   model,
   comp_match,
+  do_regex = FALSE,
   orig_data = NULL,
   by_factor = NULL,
   by_covar = NULL,
@@ -27,6 +28,9 @@
 \item{comp_match}{Which component to match? Must fully match only one
 component present in the model. Component names can be found in, e.g.,
 \code{summary.glm}.}
+
+\item{do_regex}{Should \code{comp_match} work by selective forward partial matching?
+Default FALSE.}
 
 \item{orig_data}{Original data on which the model was built. If left NULL,
 it will take from the model object.}

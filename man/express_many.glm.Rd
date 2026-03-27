@@ -7,6 +7,7 @@
 \method{express_many}{glm}(
   model,
   comp_match = NULL,
+  do_regex = FALSE,
   orig_data = NULL,
   by_factor = NULL,
   by_covar = NULL,
@@ -27,6 +28,9 @@
 
 \item{comp_match}{Which components to match? If left NULL, all components
 will be plotted.}
+
+\item{do_regex}{Should \code{comp_match} work by selective forward partial matching?
+Default FALSE.}
 
 \item{orig_data}{Original data on which the model was built. If left NULL,
 it will take from the model object.}

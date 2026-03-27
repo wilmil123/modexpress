@@ -8,6 +8,7 @@
   model,
   orig_data,
   comp_match = NULL,
+  do_regex = FALSE,
   by_factor = NULL,
   by_covar = NULL,
   covar_fit = "linear",
@@ -25,6 +26,9 @@
 
 \item{comp_match}{Which components to match? If left NULL, all components
 will be plotted.}
+
+\item{do_regex}{Should \code{comp_match} work by selective forward partial matching?
+Default FALSE.}
 
 \item{by_factor}{A factor to map aesthetics to. Must be present in the
 original data. If left NULL, no aesthetic mapping is performed. by_factor

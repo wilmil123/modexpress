@@ -8,6 +8,7 @@
   model,
   orig_data,
   comp_match,
+  do_regex = FALSE,
   by_factor = NULL,
   by_covar = NULL,
   b_col = "black",
@@ -32,6 +33,9 @@ component present in the model. Component names can be found in, e.g.,
 original name, not their implementation in the model. For instance,
 if there is a random effect term in a model \code{(1|Lake_ID)}, refer to this
 component simply by "Lake_ID", not "(1|Lake_ID)".}
+
+\item{do_regex}{Should \code{comp_match} work by selective forward partial matching?
+Default FALSE.}
 
 \item{by_factor}{A factor to map aesthetics to. Must be present in the
 original data. If left NULL, no aesthetic mapping is performed. by_factor

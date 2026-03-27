@@ -18,6 +18,8 @@
 #' original name, not their implementation in the model. For instance,
 #' if there is a random effect term in a model `(1|Lake_ID)`, refer to this
 #' component simply by "Lake_ID", not "(1|Lake_ID)".
+#' @param do_regex Should `comp_match` work by selective forward partial matching?
+#' Default FALSE.
 #' @param by_factor A factor to map aesthetics to. Must be present in the
 #' original data. If left NULL, no aesthetic mapping is performed. by_factor
 #' will map by colour.
@@ -51,6 +53,7 @@
 express_one.lmerMod <- function(model,
                                 orig_data,
                                 comp_match,
+                                do_regex = FALSE,
                                 by_factor = NULL,
                                 by_covar = NULL,
                                 b_col = "black",
@@ -64,8 +67,13 @@ express_one.lmerMod <- function(model,
                                 ...) {
   if (is.null(orig_data))
     stop ("Could not access original model data! Please supply it to the function.")
-  if (!(comp_match %in% attr(attr(model@frame, "terms"), "term.labels")))
-    stop (paste("Could not find model component matching", comp_match))
+
+  comp_match <- grab_smooth_from_regex(model, comp_match, do_regex)
+
+  if (length(comp_match) == 0) {
+    stop("No matches to supplied component!")
+  }
+
   if (length(attr(attr(model@frame, "terms"), "term.labels")) == 1)
     message (
       "The supplied model appears to only have one component. Consider `express_fit` for single-term models."
@@ -128,6 +136,8 @@ express_one.lmerMod <- function(model,
 #' @param orig_data Original data on which the model was built.
 #' @param comp_match Which components to match? If left NULL, all components
 #' will be plotted.
+#' @param do_regex Should `comp_match` work by selective forward partial matching?
+#' Default FALSE.
 #' @param by_factor A factor to map aesthetics to. Must be present in the
 #' original data. If left NULL, no aesthetic mapping is performed. by_factor
 #' will map by colour.
@@ -164,6 +174,7 @@ express_one.lmerMod <- function(model,
 express_many.lmerMod <- function(model,
                                  orig_data,
                                  comp_match = NULL,
+                                 do_regex = FALSE,
                                  by_factor = NULL,
                                  by_covar = NULL,
                                  grid = TRUE,
@@ -179,9 +190,11 @@ express_many.lmerMod <- function(model,
   if (is.null(comp_match)) {
     comp_names <- attr(attr(model@frame, "terms"), "term.labels")
   } else {
-    comp_names <- comp_match
+    comp_names <- grab_smooth_from_regex(model, comp_match, do_regex)
 
-    if (length(comp_names) == 1) {
+    if (length(comp_names) == 0) {
+      stop("No matches to supplied component!")
+    } else if (length(comp_names) == 1) {
       message(
         paste(
           "Only one component supplied:",
@@ -790,6 +803,8 @@ express_gauge.lmerMod <- function(model,
 #' @param orig_data Original data on which the model was built.
 #' @param comp_match Which components to match? If left NULL, all components
 #' will be plotted.
+#' @param do_regex Should `comp_match` work by selective forward partial matching?
+#' Default FALSE.
 #' @param by_factor A factor to map aesthetics to. Must be present in the
 #' original data. If left NULL, no aesthetic mapping is performed. by_factor
 #' will map by colour. Residuals will be tested for systematic variation
@@ -835,6 +850,7 @@ express_gauge.lmerMod <- function(model,
 express_gaugepart.lmerMod <- function(model,
                                       orig_data,
                                       comp_match = NULL,
+                                      do_regex = FALSE,
                                       by_factor = NULL,
                                       by_covar = NULL,
                                       covar_fit = "linear",
@@ -855,7 +871,11 @@ express_gaugepart.lmerMod <- function(model,
   if (is.null(comp_match)) {
     comp_names <- attr(attr(model@frame, "terms"), "term.labels")
   } else {
-    comp_names <- comp_match
+    comp_names <- grab_smooth_from_regex(model, comp_match, do_regex)
+  }
+
+  if (length(comp_names) == 0) {
+    stop("No matches to supplied component!")
   }
 
   if (is.null(by_factor) &

@@ -8,6 +8,7 @@
   model,
   orig_data,
   comp_match,
+  do_regex = FALSE,
   by_factor = NULL,
   by_covar = NULL,
   b_col = "black",
@@ -29,6 +30,9 @@
 \item{comp_match}{Which component to match? Must fully match only one
 component present in the model. Component names can be found in, e.g.,
 \code{summary.lm}.}
+
+\item{do_regex}{Should \code{comp_match} work by selective forward partial matching?
+Default FALSE.}
 
 \item{by_factor}{A factor to map aesthetics to. Must be present in the
 original data. If left NULL, no aesthetic mapping is performed. by_factor

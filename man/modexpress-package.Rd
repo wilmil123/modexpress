@@ -6,7 +6,7 @@
 \alias{modexpress-package}
 \title{modexpress: Express Model Coefficients and Diagnostics Along Variables Outside of the Model}
 \description{
-Methods for plotting and testing model coefficients and diagnostics to assess whether or not there is systematic variation within the model according to categorical or factor variables, whether or not they are used in the model itself.
+Methods for plotting and testing model coefficients and diagnostics to assess whether or not there is systematic variation within the model according to numeric or factor variables, whether or not they are used in the model itself.
 }
 \author{
 \strong{Maintainer}: William Chapman \email{william.m.chapman@mail.mcgill.ca}

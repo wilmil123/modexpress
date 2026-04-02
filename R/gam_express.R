@@ -1034,22 +1034,45 @@ plot_gam_component <- function(model,
   # i.e., is bivariate
   # captures all of s(x1,x2), ti(x1,x2), te(x1,x2), t2(x1,x2), etc...
   if (grepl(",", component) == TRUE) {
-    out_plot <- plot_bivar_smooth(
-      orig_data = orig_data,
-      model = model,
-      component = component,
-      smooth_name = smooth_name,
-      smooth_funcs = smooth_funcs,
-      by_factor = by_factor,
-      by_covar = by_covar,
-      r_col = r_col,
-      r_opac = r_opac,
-      s_pal = s_pal,
-      s_pal_rev = s_pal_rev,
-      f_pal = f_pal,
-      cov_pal = cov_pal,
-      cov_pal_rev = cov_pal_rev
-    )
+    # if there is only one comma
+    if (stringr::str_count(component, ",") == 1) {
+      out_plot <- plot_bivar_smooth(
+        orig_data = orig_data,
+        model = model,
+        component = component,
+        smooth_name = smooth_name,
+        smooth_funcs = smooth_funcs,
+        by_factor = by_factor,
+        by_covar = by_covar,
+        r_col = r_col,
+        r_opac = r_opac,
+        s_pal = s_pal,
+        s_pal_rev = s_pal_rev,
+        f_pal = f_pal,
+        cov_pal = cov_pal,
+        cov_pal_rev = cov_pal_rev
+      )
+    # if there are two commas or more
+    } else if (stringr::str_count(component, ",") >= 2) {
+      out_plot <- plot_highvar_smooth(
+        orig_data = orig_data,
+        model = model,
+        component = component,
+        smooth_name = smooth_name,
+        smooth_funcs = smooth_funcs,
+        by_factor = by_factor,
+        by_covar = by_covar,
+        r_col = r_col,
+        r_opac = r_opac,
+        s_pal = s_pal,
+        s_pal_rev = s_pal_rev,
+        f_pal = f_pal,
+        cov_pal = cov_pal,
+        cov_pal_rev = cov_pal_rev
+      )
+    } else {
+      stop("Something went wrong :(")
+    }
   } else if (unique(smooth_funcs$`.type`) == "Random effect") {
     # if it is a random effect
     out_plot <- plot_re_smooth(
@@ -1285,6 +1308,136 @@ plot_bivar_smooth <- function(orig_data,
       fill = "Partial effect",
       x = x_dim,
       y = y_dim,
+      title = paste(smooth_name, "on", outcome_term),
+      caption = paste("Basis:", unique(smooth_funcs$`.type`))
+    )
+
+  return(out_plot)
+}
+
+# for higher-order smooths, plot the first two components of a PCA or similar for the smooth
+plot_highvar_smooth <- function(orig_data,
+                              model,
+                              component,
+                              smooth_funcs,
+                              smooth_name,
+                              by_factor,
+                              by_covar,
+                              r_col,
+                              r_opac,
+                              s_pal,
+                              s_pal_rev,
+                              f_pal,
+                              cov_pal,
+                              cov_pal_rev) {
+  # local variable definitions
+  `.estimate` <- Dim1 <- Dim2 <- var <- NULL
+
+  model_terms <- colnames(model$model)
+  outcome_term <- model$terms[[2]]
+  orig_data <- remove_orig_data_na(orig_data, model_terms) |>
+    gratia::add_partial_residuals(model)
+
+  if (!all(is.na(smooth_funcs$`.by`))) {
+    split_by <- unique(smooth_funcs$`.by`)
+    cur_split <- unlist(unique(smooth_funcs[, split_by]), use.names = FALSE)
+    orig_data <- orig_data |>
+      subset(get(split_by) == cur_split)
+  }
+
+  dims <- strsplit(component, ",")[[1]]
+  dimvars <- dplyr::select(orig_data, tidyselect::any_of(dims))
+  # tibble needs to be coerced to data frame
+  # unused levels need to be dropped, if any
+  preddata <- droplevels(as.data.frame(smooth_funcs))
+  # if any of the variables are factors
+  if (length(Filter(function(col) {is.factor(col) | is.character(col)}, dimvars)) > 0) {
+    # if any of the variables are numeric, i.e., data is mixed
+    if (length(Filter(is.numeric, dimvars)) > 0) {
+      principal_comps <- FactoMineR::FAMD(dimvars, ncp = 2, graph = FALSE)
+      dimreduce_orig <- as.data.frame(factoextra::get_famd_ind(principal_comps)$coord)
+      dimreduce_est <- as.data.frame(
+        FactoMineR::predict.FAMD(object = principal_comps,
+                                 newdata = preddata)$coord
+      )
+      var_loadings <- as.data.frame(factoextra::get_famd_var(principal_comps)$coord)
+      dimreduce_type <- "FAMD"
+    } else {
+      principal_comps <- FactoMineR::MCA(dimvars, ncp = 2, graph = FALSE)
+      dimreduce_orig <- as.data.frame(factoextra::get_mca_ind(principal_comps)$coord)
+      dimreduce_est <- as.data.frame(
+        FactoMineR::predict.MCA(object = principal_comps,
+                                newdata = preddata)$coord
+      )
+      var_loadings <- as.data.frame(factoextra::get_mca_var(principal_comps)$coord)
+      dimreduce_type <- "MCA"
+    }
+  } else {
+    principal_comps <- stats::prcomp(dimvars, scale = TRUE)
+    dimreduce_orig <- as.data.frame(factoextra::get_pca_ind(principal_comps)$coord[,1:2])
+    dimreduce_est <- as.data.frame(
+      stats::predict(object = principal_comps,
+                     newdata = preddata)[,1:2] # only first two components
+    )
+    var_loadings <- as.data.frame(factoextra::get_pca_var(principal_comps)$coord)[,1:2]
+    dimreduce_type <- "PCA"
+  }
+
+  colnames(var_loadings) <- colnames(dimreduce_orig) <- colnames(dimreduce_est) <- c("Dim1", "Dim2")
+  var_loadings$var <- rownames(var_loadings)
+  dimreduce_est$`.estimate` <- smooth_funcs$`.estimate`
+  # have to round the data otherwise it is HUGE
+  dimreduce_est <- dplyr::mutate(dimreduce_est,
+                                 dplyr::across(tidyselect::where(\(x) is.numeric(x)), \(x) round(x, 4)))
+  orig_data <- cbind(orig_data, dimreduce_orig)
+
+  var_expl_bycomp <- as.data.frame(factoextra::get_eig(principal_comps))
+
+  out_plot <- ggplot2::ggplot(dimreduce_est) +
+    ggplot2::geom_tile(ggplot2::aes(
+      x = Dim1,
+      y = Dim2,
+      width = 0.2,
+      height = 0.2,
+      fill = .estimate
+    )) +
+    colorspace::scale_fill_continuous_diverging(palette = s_pal, rev = s_pal_rev,
+                                                alpha = 0.5)
+
+  out_plot <- add_xy_points(
+    out_plot = out_plot,
+    x_dim = "Dim1",
+    y_dim = "Dim2",
+    orig_data = orig_data,
+    by_factor = by_factor,
+    by_covar = by_covar,
+    r_col = r_col,
+    r_opac = r_opac,
+    f_pal = f_pal,
+    cov_pal = cov_pal,
+    cov_pal_rev = cov_pal_rev
+  )
+
+  out_plot <- out_plot + ggplot2::geom_segment(ggplot2::aes(
+    x = 0,
+    y = 0,
+    xend = Dim1,
+    yend = Dim2
+  ),
+  arrow = grid::arrow(length = grid::unit(0.25, "cm")),
+  data = var_loadings,
+  colour = "grey30") +
+    ggrepel::geom_text_repel(ggplot2::aes(
+      label = var,
+      x = Dim1,
+      y = Dim2
+    ),
+    data = var_loadings,
+    colour = "grey30") + cowplot::theme_minimal_grid() +
+    ggplot2::labs(
+      fill = "Partial effect",
+      x = paste(dimreduce_type, "Dim. 1", paste0("(", round(var_expl_bycomp[1,]$variance.percent, 1), "%)")),
+      y = paste(dimreduce_type, "Dim. 2", paste0("(", round(var_expl_bycomp[2,]$variance.percent, 1), "%)")),
       title = paste(smooth_name, "on", outcome_term),
       caption = paste("Basis:", unique(smooth_funcs$`.type`))
     )

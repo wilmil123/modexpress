@@ -23,5 +23,11 @@ The main ideas behind the functions in the package are to:
   * `express_gauge()` (full model)
   * `express_gaugepart()` (individual model components)
   
+### Higher-order GAM smooth plotting
+'modexpress' allows you to plot higher-order `mgcv::gam` smooths, including trivariate smooths with an 're' marginal term, quadrivariate continuous term smooths, and higher orders of either of the previous, by reducing the dimensionality of the produced smooth according to:
+* Principal components analysis (PCA; all smooth terms are continuous)
+* Factor analysis for mixed data (FAMD; smooth terms are a mix of continuous and factor variables)
+* Multiple correspondence analysis (MCA; all smooth terms are categorical)
+  
 ## Examples
 Non-rigorous testing examples for 'modexpress' functions can be found in the [test-examples.R](examples/test-examples.R) file. A walkthrough of these examples is provided in [test-examples.md](examples/test-examples.md) These use R's built-in data to demonstrate some sample outputs. True testing infrastructure is either not possible or extremely complex, because most functions create 'ggplot2' objects which are simultaneously an unvarying return type and highly data-dependent in their internal structure. 

@@ -1,7 +1,7 @@
 Package: modexpress
 Type: Package
 Title: Express Model Coefficients and Diagnostics Along Variables Outside of the Model
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person(
       "William", "Chapman",
@@ -11,7 +11,7 @@ Authors@R: c(
   )
 Description: Methods for plotting and testing model coefficients and diagnostics
   to assess whether or not there is systematic variation within the model
-  according to categorical or factor variables, whether or not they are
+  according to numeric or factor variables, whether or not they are
   used in the model itself.
 Encoding: UTF-8
 LazyData: true
@@ -22,6 +22,7 @@ Imports:
   tidyr,
   purrr,
   tidyselect,
+  stringr,
   ggplot2,
   colorspace,
   cowplot,
@@ -29,7 +30,10 @@ Imports:
   lme4,
   effects
 Suggests:
-  mgcv
+  mgcv,
+  FactoMineR,
+  factoextra,
+  ggrepel
 Depends:
   R (>= 4.1.0)
 License: MIT + file LICENSE

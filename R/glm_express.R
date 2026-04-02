@@ -530,7 +530,7 @@ express_linpred.glm <- function(model,
   }
   if (is.null(orig_data))
     stop("Could not access model data. Please make sure to define `data` in the `glm` object.")
-  model_terms <- attr(model$terms, "term.labels")
+  model_terms <- colnames(model$model)
   outcome_term <- model$terms[[2]]
   orig_data <- remove_orig_data_na(orig_data, model_terms)
   if (res_type == "standard") {

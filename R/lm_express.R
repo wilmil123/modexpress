@@ -77,7 +77,7 @@ express_one.lm <- function(model,
       "The supplied model appears to only have one component. Consider `express_fit` for single-term models."
     )
 
-  model_terms <- attr(model$terms, "term.labels")
+  model_terms <- colnames(model$model)
   outcome_term <- model$terms[[2]]
   orig_data <- remove_orig_data_na(orig_data, model_terms)
 
@@ -453,7 +453,7 @@ express_fit.lm <- function(model,
                            ...) {
   # whether the covariate palette should be reversed
 
-  model_terms <- attr(model$terms, "term.labels")
+  model_terms <- colnames(model$model)
   outcome_term <- model$terms[[2]]
   orig_data <- remove_orig_data_na(orig_data, model_terms)
 
@@ -547,7 +547,7 @@ express_qqresid.lm <- function(model,
   # local variable definitions
   `.residual` <- qq <- NULL
 
-  model_terms <- attr(model$terms, "term.labels")
+  model_terms <- colnames(model$model)
   outcome_term <- model$terms[[2]]
   orig_data <- remove_orig_data_na(orig_data, model_terms)
 
@@ -646,7 +646,7 @@ express_linpred.lm <- function(model,
                                ...) {
   # whether the covariate palette should be reversed
 
-  model_terms <- attr(model$terms, "term.labels")
+  model_terms <- colnames(model$model)
   outcome_term <- model$terms[[2]]
   orig_data <- remove_orig_data_na(orig_data, model_terms)
 
@@ -743,7 +743,7 @@ express_scloc.lm <- function(model,
   # local variable definitions
   `.fitted` <- `.scloc` <- NULL
 
-  model_terms <- attr(model$terms, "term.labels")
+  model_terms <- colnames(model$model)
   outcome_term <- model$terms[[2]]
   orig_data <- remove_orig_data_na(orig_data, model_terms)
 
@@ -848,7 +848,7 @@ express_lev.lm <- function(model,
   # local variable definitions
   `.residual` <- `.lev` <- NULL
 
-  model_terms <- attr(model$terms, "term.labels")
+  model_terms <- colnames(model$model)
   outcome_term <- model$terms[[2]]
   orig_data <- remove_orig_data_na(orig_data, model_terms)
 
@@ -937,7 +937,7 @@ express_hist.lm <- function(model,
   # local variable definitions
   `.residual` <- NULL
 
-  model_terms <- attr(model$terms, "term.labels")
+  model_terms <- colnames(model$model)
   outcome_term <- model$terms[[2]]
   orig_data <- remove_orig_data_na(orig_data, model_terms)
 
@@ -1047,7 +1047,7 @@ express_gauge.lm <- function(model,
       is.null(by_covar))
     stop("Both `by_factor` and `by_covar` are NULL. Please supply one or both.")
 
-  model_terms <- attr(model$terms, "term.labels")
+  model_terms <- colnames(model$model)
   outcome_term <- model$terms[[2]]
   orig_data <- remove_orig_data_na(orig_data, model_terms)
 
@@ -1169,7 +1169,7 @@ express_gaugepart.lm <- function(model,
       is.null(by_covar))
     stop("Both `by_factor` and `by_covar` are NULL. Please supply one or both.")
 
-  model_terms <- attr(model$terms, "term.labels")
+  model_terms <- colnames(model$model)
   outcome_term <- model$terms[[2]]
 
   out_objs <- lapply(comp_names, function(component) {

@@ -405,8 +405,8 @@ express_fit.lmerMod <- function(model,
                                 cov_pal = "Sunset Dark",
                                 cov_pal_rev = FALSE,
                                 ...) {
-  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[2]]
-  outcome_term <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]][1]
+  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]]
+  outcome_term <- model_terms[1]
   orig_data <- remove_orig_data_na(orig_data, model_terms)
 
   orig_data$`.fitted` <- stats::fitted(model)
@@ -494,8 +494,8 @@ express_qqresid.lmerMod <- function(model,
   # local variable definitions
   `.residual` <- qq <- NULL
 
-  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[2]]
-  outcome_term <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]][1]
+  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]]
+  outcome_term <- model_terms[1]
   orig_data <- remove_orig_data_na(orig_data, model_terms)
 
   orig_data$`.residual` <- stats::residuals(model, type = res_type)
@@ -582,8 +582,8 @@ express_linpred.lmerMod <- function(model,
                                     cov_pal = "Sunset Dark",
                                     cov_pal_rev = FALSE,
                                     ...) {
-  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[2]]
-  outcome_term <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]][1]
+  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]]
+  outcome_term <- model_terms[1]
   orig_data <- remove_orig_data_na(orig_data, model_terms)
 
   orig_data$`.residual` <- stats::residuals(model, type = res_type)
@@ -659,8 +659,8 @@ express_hist.lmerMod <- function(model,
   # local variable definitions
   `.residual` <- NULL
 
-  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[2]]
-  outcome_term <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]][1]
+  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]]
+  outcome_term <- model_terms[1]
   orig_data <- remove_orig_data_na(orig_data, model_terms)
 
   orig_data$`.residual` <- stats::residuals(model, type = res_type)
@@ -759,8 +759,8 @@ express_gauge.lmerMod <- function(model,
       is.null(by_covar))
     stop("Both `by_factor` and `by_covar` are NULL. Please supply one or both.")
 
-  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[2]]
-  outcome_term <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]][1]
+  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]]
+  outcome_term <- model_terms[1]
   orig_data <- remove_orig_data_na(orig_data, model_terms)
 
   orig_data$`.residual` <- stats::residuals(model, type = res_type)
@@ -877,8 +877,8 @@ express_gaugepart.lmerMod <- function(model,
       is.null(by_covar))
     stop("Both `by_factor` and `by_covar` are NULL. Please supply one or both.")
 
-  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[2]]
-  outcome_term <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]][1]
+  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]]
+  outcome_term <- model_terms[1]
 
   out_objs <- lapply(comp_names, function(component) {
     if (!(component %in% attr(attr(model@frame, "terms"), "term.labels")))
@@ -991,8 +991,8 @@ plot_lmm_partial_resids <- function(model,
   # local variable initialization
   upper_ci <- lower_ci <- est_line <- NULL
 
-  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[2]]
-  outcome_term <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]][1]
+  model_terms <- attr(attr(attr(model@frame, "terms"), "factors"), "dimnames")[[1]]
+  outcome_term <- model_terms[1]
   orig_data <- remove_orig_data_na(orig_data, model_terms)
   orig_data$partial_resids <- stats::residuals(effects::effect(comp_match, partial.residuals = TRUE, model))
 
